@@ -13,7 +13,16 @@ class Genre(models.Model):
         String for representing the Model object (in Admin site, etc.)
         """
         return self.name
-        
+
+class Language(models.Model):
+    """
+    Model representing a Language, e.g, English, French, etc.
+    """
+    name = models.CharField(max_length=200, help_text="Enter a book's language, e.g., English, French, etc.")
+    
+    def __str__(self):
+        return self.name
+            
 class Book(models.Model):
     """
     Model representing a book title (not a specific copy)
@@ -25,11 +34,8 @@ class Book(models.Model):
     summary = models.TextField(max_length=1000, help_text='Enter a brief description of the book')
     isbn = models.CharField('ISBN', max_length=13, help_text='13-character  <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
     genre = models.ManyToManyField(Genre, help_text='Select a genre for this book')
-    LANGUAGE = (
-    ('eng', 'English'),
-    ('far', 'Farsi'),
-    )
-    language = models.CharField(max_length=3, choices = LANGUAGE, blank=True, default='e', helpt_text='Book Language')
+    language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True, help_text='Book Language')
+    
     # ManyToManyField used because genre can contain many books, and books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
     
