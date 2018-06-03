@@ -89,8 +89,8 @@ class BookInstance(models.Model):
              
     class Meta:
         ordering = ["due_back"]
-        permissions = (("can_mark_returned", "Set book as returned"),)
-
+        permissions = (("can_mark_returned", "Set book as returned"),("can_view_all_checkouts", "Show checked out books borrower info"),)
+        
     def __str__(self):
         return '{0} ({1})'.format(self.id, self.book.title)
 

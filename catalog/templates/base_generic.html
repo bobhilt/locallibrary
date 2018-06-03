@@ -24,8 +24,13 @@
               <li><a href="{% url 'authors' %}">All authors</a></li>
               <p></p>
               {% if user.is_authenticated %}
-                <li>User: {{ user.get_username }} (<a href="{% url 'logout'%}?next={{request.path}}">Logout</a>)</li>   
-                <li><a href="{% url 'my-borrowed' %}">My Borrowed</a></li>
+                <li>User: {{ user.get_username }} (<a href="{% url 'logout'%}?next={{request.path}}">Logout</a>)</li>
+                {% if perms.catalog.can_view_all_checkouts %}
+                    <!-- Staff can see borrower data for checked out books. -->
+                    <li><a href="{% url 'all-borrowed' %}">All Checked Out Items</a></li>
+                {% else %}
+                  <li><a href="{% url 'my-borrowed' %}">My Borrowed</a></li>
+                {% endif %}
               {% else %}
                 <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>   
               {% endif %} 
