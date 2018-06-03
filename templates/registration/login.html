@@ -1,0 +1,33 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  {% if form.errors %}
+    <p>Invalid username and/or password. Please try again</p>
+  {% endif %}
+  
+  {% if next %}
+    {% if user.is_authenticated %}
+      <p>Your account does not have access to ths page. Please login with another account
+        or see your system administrator</p>
+    {% else %}
+      <p>Please login to see this page.</p>
+    {% endif %}
+  {% endif %}
+  <form method="post" accept-charset="utf-8" action="{% url 'login' %}">
+    {% csrf_token %}
+    <div>
+      <td>{{ form.username.label_tag }}</td>
+      <td>{{ form.username }}</td>
+    </div>
+    <div>
+      <td>{{ form.password.label_tag }}</td>
+      <td>{{ form.password }}</td>      
+    </div>
+    <div>
+      <input type="submit" value="login" />
+      <input type="hidden" name="next" value="{{ next }}" />
+    </div>
+  </form>
+  {# Assumes password_reset view set up in URLconf #}
+  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+{% endblock content %}

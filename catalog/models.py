@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse #Used to generate URLs by reversing the URL patterns
 import uuid # Required for unique book instances
+from django.contrib.auth.models import User
+from datetime import date
 
 class Genre(models.Model):
     """
@@ -53,8 +55,12 @@ class Book(models.Model):
         Creates a string for the Genre. This is required to display genre in Admin.
         """
         return ', '.join([ genre.name for genre in self.genre.all()[:3] ])
+
+    class Meta:
+        ordering = ["title"]
         
     display_genre.short_description = 'Genre'
+    
 
 class BookInstance(models.Model):
     """
@@ -73,7 +79,14 @@ class BookInstance(models.Model):
     )
     
     status = models.CharField(max_length=1, choices=LOAN_STATUS, blank=True, default='m', help_text='Book availability')
-    
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def is_overdue(self):
+        if self.due_back and date.today() > self.due_back:
+            return True
+        else:
+             return False
+             
     class Meta:
         ordering = ["due_back"]
         
@@ -94,8 +107,9 @@ class Author(models.Model):
         
     def get_absolute_url(self):
         """
-        Returns the url to accessa particular author.
+        Returns the url to access a particular author instance.
         """
+        return reverse('author-detail', args=[str(self.id)])
     
     def __str__(self):
         return '{0}, {1}'.format(self.last_name, self.first_name)
